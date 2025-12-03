@@ -56,3 +56,75 @@
 ### Файл конфигурации зон
 Расположен в:
 
+
+
+<!-- PROJECT BANNER -->
+<p align="center">
+  <img src="https://raw.githubusercontent.com/yourname/yourrepo/main/docs/banner.png" alt="Zone Manager Banner" width="100%">
+</p>
+
+<h1 align="center">Zone Manager — Home Assistant Custom Component + Lovelace Card</h1>
+
+<p align="center">
+  Управление пространствами и зонами освещения в Home Assistant.<br>
+  Интеграция + карточка для удобного редактирования зоны, сенсоров и светильников.<br>
+</p>
+
+<p align="center">
+  <a href="https://github.com/yourname/yourrepo/releases"><img src="https://img.shields.io/github/v/release/yourname/yourrepo?color=brightgreen&label=Version&style=flat-square"></a>
+  <a href="https://github.com/yourname/yourrepo"><img src="https://img.shields.io/github/stars/yourname/yourrepo?style=flat-square"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Home%20Assistant-Custom%20Component-blue?style=flat-square&logo=homeassistant"></a>
+  <a href="#"><img src="https://img.shields.io/badge/HACS-Custom-orange?style=flat-square&logo=homeassistantcommunitystore"></a>
+</p>
+
+---
+
+## 📖 Описание
+
+**Zone Manager** — это инструмент для управления сложными пространствами и зонами освещения.  
+Он решает проблему, когда одно помещение состоит из нескольких зон, каждая со своим датчиком движения, светильником и зависимостями от соседних зон.
+
+Проект включает:
+
+- 🔧 **Custom Integration (backend)** — хранит конфигурации и предоставляет WebSocket API  
+- 🖥 **Lovelace Custom Card (frontend)** — удобный редактор зон без YAML  
+- 🔁 Автоматическая синхронизация `/config/zones_config.json` ↔ `.storage/zone_manager_card_config`  
+- 🧠 Устойчивый UI: без постоянных перерисовок, без потери данных, без зависаний
+
+---
+
+## ✨ Возможности
+
+### Backend — Интеграция
+- Хранение всех пространств и зон
+- WebSocket API:
+  - `zone_manager/get_space_config`
+  - `zone_manager/save_space_config`
+- Автоматическая запись в `zones_config.json` и `.storage`
+- Поддержка сложной логики соседних зон
+- Без создания собственных entities — чистая структура данных
+
+### Frontend — Lovelace Card
+- Полноценный визуальный редактор
+- Добавление, удаление, редактирование зон
+- Выбор `sensor.*` и `light.*` из списков
+- Быстрая загрузка конфигурации через WS
+- Регистрация в **Card Picker**
+- Никаких лагов или перерисовок UI (fixed в v0.3.1)
+- Индикатор загрузки пространства
+- Поддержка нескольких пространств
+
+---
+
+## 🎥 Визуальный пример
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/yourname/yourrepo/main/docs/preview.gif" width="75%" alt="UI Demo">
+</p>
+
+---
+
+## 📦 Установка
+
+### 📁 Вручную
+1. Скопировать интеграцию:
