@@ -1,0 +1,30 @@
+name: Release Builder
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create integration bundle
+        run: |
+          mkdir -p build/zone_manager
+          cp -R custom_components/zone_manager build/zone_manager/
+          cp -R www build/zone_manager/
+          cp -R zones_config.json build/zone_manager/ || true
+
+      - name: Create ZIP archive
+        run: |
+          cd build
+          zip -r zone_manager-${{ github.event.release.tag_name }}.zip zone_manager
+
+      - name: Upload ZIP to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/zone_manager-${{ github.event.release.tag_name }}.zip
