@@ -1,0 +1,11 @@
+
+{
+  "manifest_version": 2,
+  "domain": "zone_manager",
+  "name": "Zone Manager",
+  "codeowners": ["@Azrielshka"],
+  "config_flow": true,
+  "documentation": "https://github.com/Azrielshka?tab=repositories",
+  "requirements": ["voluptuous>=0.12.1"],
+  "version": "0.1.1"
+}
