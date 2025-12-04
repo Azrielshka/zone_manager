@@ -12,19 +12,70 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Create integration bundle
+      - name: Validate manifest version matches tag
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
-          mkdir -p build/zone_manager
-          cp -R custom_components/zone_manager build/zone_manager/
-          cp -R www build/zone_manager/
-          cp -R zones_config.json build/zone_manager/ || true
+          echo "Release tag: ${RELEASE_TAG}"
+          TAG_VERSION="${RELEASE_TAG#v}"
 
-      - name: Create ZIP archive
+          MANIFEST_PATH="custom_components/zone_manager/manifest.json"
+          echo "Reading version from ${MANIFEST_PATH}"
+
+          PYTHON_CODE=$(cat << 'PY'
+          import json, os, sys
+          manifest_path = os.environ["MANIFEST_PATH"]
+          tag_version = os.environ["TAG_VERSION"]
+
+          with open(manifest_path, "r", encoding="utf-8") as f:
+              data = json.load(f)
+
+          manifest_version = data.get("version")
+          print(f"Manifest version: {manifest_version}")
+          print(f"Tag version:      {tag_version}")
+
+          if manifest_version != tag_version:
+              print("ERROR: manifest.json version is not equal to tag version.")
+              sys.exit(1)
+          PY
+          )
+
+          TAG_VERSION="${TAG_VERSION}"
+          export MANIFEST_PATH TAG_VERSION
+          python - << 'PY'
+          import json, os, sys
+          manifest_path = os.environ["MANIFEST_PATH"]
+          tag_version = os.environ["TAG_VERSION"]
+
+          with open(manifest_path, "r", encoding="utf-8") as f:
+              data = json.load(f)
+
+          manifest_version = data.get("version")
+          print(f"Manifest version: {manifest_version}")
+          print(f"Tag version:      {tag_version}")
+
+          if manifest_version != tag_version:
+              print("ERROR: manifest.json version is not equal to tag version.")
+              sys.exit(1)
+          PY
+
+      - name: Create dist directory
+        run: mkdir -p dist
+
+      - name: Create ZIP archive (integration + card)
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
-          cd build
-          zip -r zone_manager-${{ github.event.release.tag_name }}.zip zone_manager
+          ZIP_NAME="zone_manager-${RELEASE_TAG}.zip"
+          echo "Creating ${ZIP_NAME}"
 
-      - name: Upload ZIP to Release
+          zip -r "dist/${ZIP_NAME}" custom_components www \
+            -x "**/__pycache__/*" "*.pyc" ".DS_Store"
+
+          echo "Created dist/${ZIP_NAME}"
+          ls -lah dist
+
+      - name: Upload ZIP to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: build/zone_manager-${{ github.event.release.tag_name }}.zip
+          files: dist/zone_manager-${{ github.event.release.tag_name }}.zip
