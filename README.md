@@ -1,7 +1,7 @@
 
 <!-- PROJECT BANNER -->
 <p align="center">
-  <img src="https://raw.githubusercontent.com/yourname/yourrepo/main/docs/banner.png" alt="Zone Manager Banner" width="100%">
+  <img src="https://github.com/user-attachments/assets/359c14ba-d0bc-4d6b-a251-4bcd3628ab3d" alt="Zone Manager Banner" width="25%">
 </p>
 
 <h1 align="center">Zone Manager — Home Assistant Custom Component + Lovelace Card</h1>
