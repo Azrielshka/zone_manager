@@ -701,3 +701,11 @@ async _loadSpaceConfig() {
 
 // Регистрация Web Component для Lovelace
 customElements.define("zone-manager-card", ZoneManagerCard);
+// Регистрация карточки в UI Lovelace (Card Picker)
+window.customCards = window.customCards || [];
+window.customCards.push({
+  type: "zone-manager-card",
+  name: "Zone Manager Card",
+  description: "Управление зонами освещения для одного пространства",
+  preview: false, // можно true, если захочешь предпросмотр
+});
