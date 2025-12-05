@@ -59,8 +59,8 @@
 
 ## 🎥 Визуальный пример
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/yourname/yourrepo/main/docs/preview.gif" width="75%" alt="UI Demo">
+<p align="left">
+  <img width="514" height="533" alt="Снимок экрана 2025-12-05 191325" src="https://github.com/user-attachments/assets/335523d5-d7bf-47f8-a1ab-fc539e93b72b" />
 </p>
 
 ---
