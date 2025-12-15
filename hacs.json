@@ -2,7 +2,7 @@
   "name": "Zone Manager",
   "domains": ["zone_manager"],
   "homeassistant": "2023.10.0",
-  "render_readme": true,
   "zip_release": true,
-  "filename": "zone_manager-{version}.zip"
+  "filename": "zone_manager.zip",
+  "render_readme": true
 }
