@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "domain": "zone_manager",
   "name": "Zone Manager",
-  "version": "0.3.2",
+  "version": "0.3.1",
   "documentation": "https://github.com/Azrielshka/zone_manager",
   "issue_tracker": "https://github.com/Azrielshka/zone_manager/issues",
   "description": "Интеграция для управления пространствами и зонами освещения.",
@@ -11,5 +11,6 @@
   "requirements": ["voluptuous>=0.12.1"],
   "iot_class": "local_push"
 }
+
 
 
