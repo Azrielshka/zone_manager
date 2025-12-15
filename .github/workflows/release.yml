@@ -13,37 +13,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Prepare package folder
+      - name: Prepare package directory
         run: |
           rm -rf package dist
           mkdir -p package/custom_components package/www dist
 
-          # Копируем только то, что нужно
+          # Копируем ТОЛЬКО нужные файлы
           cp -R "${{ github.workspace }}/custom_components/zone_manager" "package/custom_components/"
           cp -R "${{ github.workspace }}/www/." "package/www/"
 
-          # Чистим мусор на всякий
+          # Убираем мусор
           find package -type d -name "__pycache__" -prune -exec rm -rf {} +
           find package -type f -name "*.pyc" -delete
           find package -type f -name ".DS_Store" -delete
 
-          echo "Package content:"
-          find package -maxdepth 3 -type f
+          echo "=== PACKAGE CONTENT ==="
+          find package -maxdepth 4 -type f
 
-      - name: Create ZIP
+      - name: Create ZIP archive
         run: |
           cd package
           zip -r "../dist/zone_manager.zip" ./
           cd ..
 
-          echo "ZIP created:"
-          ls -lah dist
-          echo "ZIP listing:"
-          unzip -l dist/zone_manager.zip | head -n 50
+          echo "=== ZIP CONTENT ==="
+          unzip -l dist/zone_manager.zip
 
-      - name: Upload zip to release
+      - name: Upload ZIP to GitHub Release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
