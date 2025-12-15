@@ -1,81 +1,53 @@
-name: Release Builder
+name: Release
 
 on:
   release:
-    types: [published]
+    types: ["published"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
-  build_release:
+  release-zip:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Validate manifest version matches tag
-        env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
+      - name: Prepare package folder
         run: |
-          echo "Release tag: ${RELEASE_TAG}"
-          TAG_VERSION="${RELEASE_TAG#v}"
+          rm -rf package dist
+          mkdir -p package/custom_components package/www dist
 
-          MANIFEST_PATH="custom_components/zone_manager/manifest.json"
-          echo "Reading version from ${MANIFEST_PATH}"
+          # Копируем только то, что нужно
+          cp -R "${{ github.workspace }}/custom_components/zone_manager" "package/custom_components/"
+          cp -R "${{ github.workspace }}/www/." "package/www/"
 
-          PYTHON_CODE=$(cat << 'PY'
-          import json, os, sys
-          manifest_path = os.environ["MANIFEST_PATH"]
-          tag_version = os.environ["TAG_VERSION"]
+          # Чистим мусор на всякий
+          find package -type d -name "__pycache__" -prune -exec rm -rf {} +
+          find package -type f -name "*.pyc" -delete
+          find package -type f -name ".DS_Store" -delete
 
-          with open(manifest_path, "r", encoding="utf-8") as f:
-              data = json.load(f)
+          echo "Package content:"
+          find package -maxdepth 3 -type f
 
-          manifest_version = data.get("version")
-          print(f"Manifest version: {manifest_version}")
-          print(f"Tag version:      {tag_version}")
-
-          if manifest_version != tag_version:
-              print("ERROR: manifest.json version is not equal to tag version.")
-              sys.exit(1)
-          PY
-          )
-
-          TAG_VERSION="${TAG_VERSION}"
-          export MANIFEST_PATH TAG_VERSION
-          python - << 'PY'
-          import json, os, sys
-          manifest_path = os.environ["MANIFEST_PATH"]
-          tag_version = os.environ["TAG_VERSION"]
-
-          with open(manifest_path, "r", encoding="utf-8") as f:
-              data = json.load(f)
-
-          manifest_version = data.get("version")
-          print(f"Manifest version: {manifest_version}")
-          print(f"Tag version:      {tag_version}")
-
-          if manifest_version != tag_version:
-              print("ERROR: manifest.json version is not equal to tag version.")
-              sys.exit(1)
-          PY
-
-      - name: Create dist directory
-        run: mkdir -p dist
-
-      - name: Create ZIP archive (integration + card)
-        env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
+      - name: Create ZIP
         run: |
-          ZIP_NAME="zone_manager-${RELEASE_TAG}.zip"
-          echo "Creating ${ZIP_NAME}"
+          cd package
+          zip -r "../dist/zone_manager.zip" ./
+          cd ..
 
-          zip -r "dist/${ZIP_NAME}" custom_components www \
-            -x "**/__pycache__/*" "*.pyc" ".DS_Store"
-
-          echo "Created dist/${ZIP_NAME}"
+          echo "ZIP created:"
           ls -lah dist
+          echo "ZIP listing:"
+          unzip -l dist/zone_manager.zip | head -n 50
 
-      - name: Upload ZIP to GitHub Release
-        uses: softprops/action-gh-release@v2
+      - name: Upload zip to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          files: dist/zone_manager-${{ github.event.release.tag_name }}.zip
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist/zone_manager.zip
+          asset_name: zone_manager.zip
+          tag: ${{ github.ref }}
+          overwrite: true
