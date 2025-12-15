@@ -84,6 +84,16 @@ type: module
 4. Перезагрузить Home Assistant.
 
 ---
+## 📥 Установка через HACS
+
+1. HACS → **Integrations**
+2. ⋮ → **Custom repositories**
+3. Repository: `Azrielshka/zone_manager`
+4. Category: **Integration**
+5. Нажать **Add**
+6. Найти **Zone Manager** → **Install**
+7. Перезагрузить Home Assistant
+8. Настройки → Устройства и службы → **Добавить интеграцию** → **Zone Manager**
 
 ## ⚙️ Настройка
 
