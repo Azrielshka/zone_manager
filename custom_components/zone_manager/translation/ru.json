@@ -1,0 +1,16 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Zone Manager",
+        "description": "Настройка интеграции Zone Manager.",
+        "data": {
+          "config_path": "Путь к JSON файлу конфигурации"
+        }
+      }
+    },
+    "error": {
+      "invalid_config_path": "Некорректный путь к файлу"
+    }
+  }
+}
