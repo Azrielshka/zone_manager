@@ -5,3 +5,23 @@ reload:
 export:
   name: Export
   description: Force save current in-memory configuration to /config JSON file (atomic write).
+
+get_sensor_config:
+  name: Get sensor config
+  description: >
+    Find zone config by trigger sensor entity_id in zone_manager.json (spaces -> zones -> <entity_id>).
+    Returns normalized fields for automations via response_variable.
+  fields:
+    entity_id:
+      name: Sensor entity_id
+      description: Trigger sensor entity_id to look up (e.g. sensor.ms_4_1_4_3_state).
+      required: true
+      selector:
+        entity: {}
+    reload:
+      name: Reload before lookup
+      description: Reload JSON from disk before searching (slower, but always fresh).
+      required: false
+      default: false
+      selector:
+        boolean: {}
