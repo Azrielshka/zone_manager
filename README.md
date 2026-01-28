@@ -22,11 +22,7 @@ Zone Manager помогает конфигурировать **простран�
 ---
 
 ## 🖼 Визуальный пример карточки
-
-![Zone Manager Card](docs/images/black_back.png)
-![Zone Manager Card](docs/images/white_back.png)
-
-
+<img src="docs/images/black_back.png" alt="Zone Manager Card" width="400"> <img src="docs/images/white_back.png" alt="Zone Manager Card" width="400">
 ---
 
 ## 📦 Установка
