@@ -4,6 +4,11 @@ on:
   release:
     types: ["published"]
   workflow_dispatch:
+    inputs:
+      tag:
+        description: "Git tag to upload asset to (например v2.1.4). Должен уже существовать."
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -16,27 +21,48 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Resolve tag
+        id: resolve_tag
+        run: |
+          # Определяем, к какому тегу привязывать ассет:
+          # - для события release: берём tag_name из релиза
+          # - для ручного запуска: берём inputs.tag
+          if [ "${{ github.event_name }}" = "release" ]; then
+            TAG="${{ github.event.release.tag_name }}"
+          else
+            TAG="${{ inputs.tag }}"
+          fi
+
+          echo "Resolved tag: $TAG"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
       - name: Prepare package directory
         run: |
+          set -euxo pipefail
+
           rm -rf package dist
           mkdir -p package/custom_components package/www dist
 
-          # Копируем ТОЛЬКО нужные файлы
+          # Копируем интеграцию
           cp -R "${{ github.workspace }}/custom_components/zone_manager" "package/custom_components/"
+
+          # Копируем карточку (как вы хотите: установка вручную, но в zip держим для удобства)
           cp -R "${{ github.workspace }}/www/." "package/www/"
 
-          # Убираем мусор
+          # Чистим мусор
           find package -type d -name "__pycache__" -prune -exec rm -rf {} +
           find package -type f -name "*.pyc" -delete
           find package -type f -name ".DS_Store" -delete
 
           echo "=== PACKAGE CONTENT ==="
-          find package -maxdepth 4 -type f
+          find package -maxdepth 6 -type f | sort
 
       - name: Create ZIP archive
         run: |
+          set -euxo pipefail
+
           cd package
-          zip -r "../dist/zone_manager.zip" ./
+          zip -r "../dist/zone_manager.zip" ./ -x "*.git*"
           cd ..
 
           echo "=== ZIP CONTENT ==="
@@ -48,5 +74,5 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: dist/zone_manager.zip
           asset_name: zone_manager.zip
-          tag: ${{ github.ref }}
+          tag: ${{ steps.resolve_tag.outputs.tag }}
           overwrite: true
