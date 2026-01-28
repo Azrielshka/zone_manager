@@ -1,0 +1,7 @@
+reload:
+  name: Reload
+  description: Reload Zone Manager configuration from /config JSON file.
+
+export:
+  name: Export
+  description: Force save current in-memory configuration to /config JSON file (atomic write).
